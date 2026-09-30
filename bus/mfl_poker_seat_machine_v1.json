@@ -1,0 +1,46 @@
+{
+  "packet": "G2_MFL_POKER_SEAT_STATE_MACHINE",
+  "version": "v1",
+  "date": "2026-09-30",
+  "issuer": "Ghost",
+  "variant": "FIVE_CARD_DRAW",
+  "asset": "MFL_TEST",
+  "decimals": 6,
+  "live_transfer": false,
+  "chip_scale": 10000,
+  "chip_is_asset": false,
+  "flow": [
+    "WALLET",
+    "SIT",
+    "LOCK_MFL",
+    "DEAL",
+    "BET",
+    "DRAW",
+    "FINAL_BET",
+    "SHOWDOWN",
+    "SETTLE",
+    "UNLOCK"
+  ],
+  "states": {
+    "WALLET": { "events": ["CONNECT", "SIT_REQUEST"] },
+    "SIT": { "events": ["LOCK_REQUEST", "LEAVE"] },
+    "LOCK_MFL": { "events": ["LOCK_OK", "LOCK_FAIL", "LEAVE"] },
+    "DEAL": { "events": ["HOLE_DEALT"] },
+    "BET": { "events": ["CHECK", "BET", "CALL", "RAISE", "FOLD", "ALLIN", "ACTION_TIMEOUT"] },
+    "DRAW": { "events": ["DISCARD_0_5", "STAND_PAT"] },
+    "FINAL_BET": { "events": ["CHECK", "BET", "CALL", "RAISE", "FOLD", "ALLIN", "ACTION_TIMEOUT"] },
+    "SHOWDOWN": { "events": ["RANK_HANDS"] },
+    "SETTLE": { "events": ["PAY_WINNER", "SPLIT_POT", "RAKE_PROTOCOL", "REFUND", "FOLD_WIN", "TIMEOUT_REFUND"] },
+    "UNLOCK": { "events": ["RETURN_STACK", "SIT_OUT", "REBUY"] }
+  },
+  "invariants": [
+    "no DEAL before LOCK_OK",
+    "no SETTLE before SHOWDOWN unless FOLD_WIN or TIMEOUT_REFUND",
+    "no UNLOCK without settle record",
+    "ledger always base_units",
+    "sum(stacks)+pot+rake == session_in"
+  ],
+  "sandbox_buyins_display_mfl": { "rookie": 10, "regular": 50, "prime": 250 },
+  "rake_bps_sandbox": 500,
+  "tie_rake_bps": 0
+}
